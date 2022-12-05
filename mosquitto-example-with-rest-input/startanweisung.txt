@@ -1,0 +1,12 @@
+Pfad: C:\Program Files\mosquitto
+Zum Ausführen: mosquitto -v -c broker.conf
+mosquitto-example-with-rest-input Ausführen
+Post Request (Postman): 
+http://localhost:8080/sendMessage
+Body:
+{
+    "topic":"myTopic",
+    "message" : {
+        "data":"hello world"
+    }
+}

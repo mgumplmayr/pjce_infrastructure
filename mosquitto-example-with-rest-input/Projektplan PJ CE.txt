@@ -1,0 +1,30 @@
+Planung
+Problemanalyse
+Ausgangsdokumente
+Ziel und Rahmenbedinungungen
+Arbeitspakete definieren
+Projektplan erstellen
+
+Implementierung
+GitHub Repository aufsetzen
+Mosquitto MQTT Broker aufsetzen
+Camunda Platform in Spring Boot aufsetzen
+Spring Applikation mit Mosquitto-Broker erstellen
+REST-Kommunikation zwischen Programmen aufsetzen
+Auf Institutrechner aufsetzen
+
+Test
+Dokumentation der Vorgänge (Anleitungen)
+Funktionstest am Institutsrechner
+Konfiguerieren von Anwendungsfällen
+Systemtest durch Anwendungsfälle
+Projektexport
+Dokumentation der Vorgänge (Testbericht)
+
+Ergebnis
+Reflexion
+Dokumentation finalisieren
+Projektpräsentation
+Projektabschluss
+
+

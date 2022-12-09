@@ -28,7 +28,7 @@ public class MqttBeans {
 		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
 		MqttConnectOptions options = new MqttConnectOptions();
 
-		options.setServerURIs(new String[] { "tcp://localhost:1883" });
+		options.setServerURIs(new String[] { "mqtt://localhost:1883" });
 		options.setUserName("admin");
 		String pass = "12345678";
 		options.setPassword(pass.toCharArray());
@@ -66,13 +66,24 @@ public class MqttBeans {
 				if(topic.equals("myTopic")) {
 					System.out.println("This is the topic");
 				}
-				System.out.println(message.getPayload());
+				sendMessageBack(message.getPayload().toString());
 			}
 
 		};
 	}
-	
-	
+	private void sendMessageBack(String message){
+		System.out.println("Sending message back to Camunda");
+		HttpRequest postRequest = HttpRequest.newBuilder()
+				.uri(new URI("http://localhost:8090/sendMessage"))
+				.POST(HttpRequest.BodyPublishers.ofString("The broker just received the message: \n"+message))
+				.build();
+
+		HttpClient httpClient = HttpClient.newHttpClient();
+		httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
+	}
+
+
+
 	@Bean
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();

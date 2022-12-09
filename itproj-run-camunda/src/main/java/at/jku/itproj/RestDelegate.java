@@ -29,7 +29,7 @@ public class RestDelegate implements JavaDelegate {
 
         HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(new URI("http://localhost:8080/sendMessage"))
-                .POST(HttpRequest.BodyPublishers.ofString("{\"topic\":\"myTopic\",\"message\" : {\"data\":\""+variable+"\"}}"))
+                .POST(HttpRequest.BodyPublishers.ofString("{\"topic\":\"test\",\"message\" : {\"data\":\""+variable+"\"}}"))
                 .build();
 
         HttpClient httpClient = HttpClient.newHttpClient();

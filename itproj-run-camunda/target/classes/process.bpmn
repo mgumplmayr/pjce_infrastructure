@@ -8,7 +8,7 @@
     <bpmn:endEvent id="EndEvent_0x6ir2l">
       <bpmn:incoming>Flow_0yvkok9</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_16gzt2m" sourceRef="say-hello" targetRef="Event_1fhlxv7" />
+    <bpmn:sequenceFlow id="SequenceFlow_16gzt2m" sourceRef="say-hello" targetRef="Gateway_13dl862" />
     <bpmn:userTask id="say-hello" name="Namen eingeben" camunda:assignee="demo" camunda:candidateUsers="demo">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -27,45 +27,84 @@
               <camunda:constraint name="readonly" />
             </camunda:validation>
           </camunda:formField>
+          <camunda:formField id="received_result" label="Erhalten:" type="string" defaultValue="${received}" />
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0poqeiq</bpmn:incoming>
+      <bpmn:incoming>Flow_0blo50p</bpmn:incoming>
       <bpmn:outgoing>Flow_0yvkok9</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_06o2zf2" sourceRef="Event_1fhlxv7" targetRef="Event_0syjpna" />
-    <bpmn:intermediateThrowEvent id="Event_1fhlxv7" name="Message via REST">
-      <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
+    <bpmn:intermediateThrowEvent id="Event_1fhlxv7" name="Message via REST gesendet">
+      <bpmn:incoming>Flow_1rdz0tv</bpmn:incoming>
       <bpmn:outgoing>Flow_06o2zf2</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_09y11nm" camunda:delegateExpression="#{restDelegate}" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0poqeiq" sourceRef="Event_0syjpna" targetRef="Activity_1ch36ln" />
-    <bpmn:intermediateThrowEvent id="Event_0syjpna" name="Message via MQTT">
+    <bpmn:sequenceFlow id="Flow_0poqeiq" sourceRef="Event_0syjpna" targetRef="Gateway_0i6jpg2" />
+    <bpmn:intermediateThrowEvent id="Event_0syjpna" name="Message via MQTT gesendet">
       <bpmn:incoming>Flow_06o2zf2</bpmn:incoming>
       <bpmn:outgoing>Flow_0poqeiq</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_17mzy1z" camunda:delegateExpression="#{MQTTDelegate}" />
     </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1rdz0tv" sourceRef="Gateway_13dl862" targetRef="Event_1fhlxv7" />
+    <bpmn:parallelGateway id="Gateway_13dl862">
+      <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rdz0tv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0k9og7m</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0k9og7m" sourceRef="Gateway_13dl862" targetRef="Event_0nzsrr2" />
+    <bpmn:intermediateCatchEvent id="Event_0nzsrr2" name="Message via REST empfangen" camunda:asyncBefore="true">
+      <bpmn:incoming>Flow_0k9og7m</bpmn:incoming>
+      <bpmn:outgoing>Flow_02kc7ig</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0h4kl2n" messageRef="Message_0xprkj5" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0blo50p" sourceRef="Gateway_0i6jpg2" targetRef="Activity_1ch36ln" />
+    <bpmn:parallelGateway id="Gateway_0i6jpg2">
+      <bpmn:incoming>Flow_0poqeiq</bpmn:incoming>
+      <bpmn:incoming>Flow_02kc7ig</bpmn:incoming>
+      <bpmn:outgoing>Flow_0blo50p</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_02kc7ig" sourceRef="Event_0nzsrr2" targetRef="Gateway_0i6jpg2" />
   </bpmn:process>
+  <bpmn:message id="Message_0xprkj5" name="message_received" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="roboDog-process">
+      <bpmndi:BPMNEdge id="Flow_02kc7ig_di" bpmnElement="Flow_02kc7ig">
+        <di:waypoint x="628" y="260" />
+        <di:waypoint x="790" y="260" />
+        <di:waypoint x="790" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0blo50p_di" bpmnElement="Flow_0blo50p">
+        <di:waypoint x="815" y="117" />
+        <di:waypoint x="860" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k9og7m_di" bpmnElement="Flow_0k9og7m">
+        <di:waypoint x="420" y="142" />
+        <di:waypoint x="420" y="260" />
+        <di:waypoint x="592" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rdz0tv_di" bpmnElement="Flow_1rdz0tv">
+        <di:waypoint x="445" y="117" />
+        <di:waypoint x="522" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0poqeiq_di" bpmnElement="Flow_0poqeiq">
+        <di:waypoint x="698" y="117" />
+        <di:waypoint x="765" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06o2zf2_di" bpmnElement="Flow_06o2zf2">
+        <di:waypoint x="558" y="117" />
+        <di:waypoint x="662" y="117" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0yvkok9_di" bpmnElement="Flow_0yvkok9">
         <di:waypoint x="960" y="117" />
         <di:waypoint x="1022" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_16gzt2m_di" bpmnElement="SequenceFlow_16gzt2m">
         <di:waypoint x="370" y="117" />
-        <di:waypoint x="502" y="117" />
+        <di:waypoint x="395" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1fp17al_di" bpmnElement="SequenceFlow_1fp17al">
         <di:waypoint x="215" y="117" />
         <di:waypoint x="270" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06o2zf2_di" bpmnElement="Flow_06o2zf2">
-        <di:waypoint x="538" y="117" />
-        <di:waypoint x="662" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0poqeiq_di" bpmnElement="Flow_0poqeiq">
-        <di:waypoint x="698" y="117" />
-        <di:waypoint x="860" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />
@@ -79,17 +118,29 @@
       <bpmndi:BPMNShape id="Activity_0zkeowg_di" bpmnElement="Activity_1ch36ln">
         <dc:Bounds x="860" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ldx6cp_di" bpmnElement="Event_1fhlxv7">
+        <dc:Bounds x="522" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="501" y="142" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_14y2xas_di" bpmnElement="Event_0syjpna">
         <dc:Bounds x="662" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="649" y="142" width="63" height="27" />
+          <dc:Bounds x="640" y="142" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0ldx6cp_di" bpmnElement="Event_1fhlxv7">
-        <dc:Bounds x="502" y="99" width="36" height="36" />
+      <bpmndi:BPMNShape id="Gateway_0fknych_di" bpmnElement="Gateway_13dl862">
+        <dc:Bounds x="395" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0qyx029_di" bpmnElement="Event_0nzsrr2">
+        <dc:Bounds x="592" y="242" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="489" y="142" width="63" height="27" />
+          <dc:Bounds x="566" y="285" width="88" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pxnbx3_di" bpmnElement="Gateway_0i6jpg2">
+        <dc:Bounds x="765" y="92" width="50" height="50" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

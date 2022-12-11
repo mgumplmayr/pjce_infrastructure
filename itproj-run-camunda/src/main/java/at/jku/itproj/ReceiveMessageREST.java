@@ -1,8 +1,6 @@
 package at.jku.itproj;
 
 
-import camundajar.impl.com.google.gson.Gson;
-import camundajar.impl.com.google.gson.JsonObject;
 import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-public class ReceiveMessage {
+public class ReceiveMessageREST {
     @Autowired
     RuntimeService runtimeService;
 
@@ -27,7 +25,7 @@ public class ReceiveMessage {
             return ResponseEntity.ok("Success");
         }catch(Exception ex) {
             ex.printStackTrace();
-            return ResponseEntity.ok("fail");
+            return ResponseEntity.ok("Fail");
         }
     }
 }

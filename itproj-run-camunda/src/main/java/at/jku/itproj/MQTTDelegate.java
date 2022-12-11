@@ -31,6 +31,6 @@ public class MQTTDelegate implements JavaDelegate {
                 mqtt.setHost("localhost", 1883);
                 connection = mqtt.blockingConnection();
                 connection.connect();
-                connection.publish("test", variable.getBytes(), QoS.AT_LEAST_ONCE, false);
+                connection.publish("myTopic", variable.getBytes(), QoS.AT_LEAST_ONCE, false);
             }
         }

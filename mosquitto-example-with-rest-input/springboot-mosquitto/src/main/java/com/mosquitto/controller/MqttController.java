@@ -16,14 +16,15 @@ public class MqttController {
 	MqttGateway mqtGateway;
 	@PostMapping("/sendMessage")
 	public ResponseEntity<?> publish(@RequestBody String mqttMessage){
-		System.out.println("Received");
+
 		try {
 		JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
 		mqtGateway.sendToMQTT(convertObject.get("message").toString(), convertObject.get("topic").toString());
 		return ResponseEntity.ok("Success");
 		}catch(Exception ex) {
+
 			ex.printStackTrace();
-			return ResponseEntity.ok("fail");
+			return ResponseEntity.ok("Fail");
 		}
 	}
 

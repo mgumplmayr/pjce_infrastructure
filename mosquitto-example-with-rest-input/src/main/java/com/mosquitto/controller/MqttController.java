@@ -28,7 +28,7 @@ public class MqttController {
 		
 		try {
 		JsonObject convertObject = new Gson().fromJson(mqttMessage, JsonObject.class);
-			System.out.println("Received");
+			System.out.println("Received REST message");
 		mqtGateway.sendToMQTT(convertObject.get("message").toString(), convertObject.get("topic").toString());
 		sendMessageBack(convertObject.get("message").toString());
 		return ResponseEntity.ok("Success");
@@ -39,8 +39,8 @@ public class MqttController {
 	}
 
 	private void sendMessageBack(String message) throws Exception {
-		TimeUnit.SECONDS.sleep(5);
-		System.out.println("Sending message back");
+		TimeUnit.SECONDS.sleep(10);
+		System.out.println("Sending the following message back: "+"This message was sent back by the MQTT Broker: "+message);
 		HttpRequest postRequest = HttpRequest.newBuilder()
 				.uri(new URI("http://localhost:8090/sendMessage"))
 				.POST(HttpRequest.BodyPublishers.ofString("This message was sent back by the MQTT Broker: "+message))

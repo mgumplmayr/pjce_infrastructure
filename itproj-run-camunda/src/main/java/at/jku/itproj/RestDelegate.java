@@ -26,6 +26,7 @@ public class RestDelegate implements JavaDelegate {
         final Object username = execution.getVariable("username");
         variable = "Hello, my name is: " + username+" and this was sent by restDelegate";
         System.out.println(variable+" will be sent via REST");
+        System.out.println(execution.getProcessInstanceId());
 
         HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(new URI("http://localhost:8080/sendMessage"))

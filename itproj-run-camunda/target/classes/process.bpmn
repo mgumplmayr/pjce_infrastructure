@@ -9,11 +9,6 @@
       <bpmn:incoming>Flow_0yvkok9</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:userTask id="Activity_1ch36ln" name="Prozess beendet">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="received_result" label="Erhalten:" type="string" defaultValue="${received}" />
-        </camunda:formData>
-      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0h31sub</bpmn:incoming>
       <bpmn:outgoing>Flow_0yvkok9</bpmn:outgoing>
     </bpmn:userTask>
@@ -34,6 +29,10 @@
     <bpmn:sequenceFlow id="Flow_0bot5ad" sourceRef="say-hello" targetRef="Event_0nzsrr2" />
     <bpmn:sequenceFlow id="Flow_0yvkok9" sourceRef="Activity_1ch36ln" targetRef="EndEvent_0x6ir2l" />
     <bpmn:intermediateCatchEvent id="Event_0nzsrr2" name="Message via REST empfangen">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="at.jku.itproj.MessageListener" event="start" />
+        <camunda:executionListener class="at.jku.itproj.MessageListener" event="end" />
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0bot5ad</bpmn:incoming>
       <bpmn:outgoing>Flow_0h31sub</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0h4kl2n" messageRef="Message_0xprkj5" />

@@ -30,7 +30,7 @@
     <bpmn:sequenceFlow id="Flow_0yvkok9" sourceRef="Activity_1ch36ln" targetRef="EndEvent_0x6ir2l" />
     <bpmn:intermediateCatchEvent id="Event_0nzsrr2" name="Message via REST empfangen">
       <bpmn:extensionElements>
-        <camunda:executionListener class="at.jku.itproj.MessageListener" event="start" />
+        <camunda:executionListener delegateExpression="${MQTTReceiver}" event="start" />
         <camunda:executionListener class="at.jku.itproj.MessageListener" event="end" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0bot5ad</bpmn:incoming>

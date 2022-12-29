@@ -28,6 +28,7 @@ public class RestDelegate implements JavaDelegate {
         System.out.println(variable+" will be sent via REST");
         System.out.println(execution.getProcessInstanceId());
 
+
         HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(new URI("http://localhost:8080/sendMessage"))
                 .POST(HttpRequest.BodyPublishers.ofString("{\"topic\":\"myTopic\",\"message\" : {\"data\":\""+variable+"\"}}"))

@@ -9,6 +9,11 @@
       <bpmn:incoming>Flow_0yvkok9</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:userTask id="Activity_1ch36ln" name="Prozess beendet">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="FormField_1uj80c7" label="Message" type="string" defaultValue="${message_received}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0h31sub</bpmn:incoming>
       <bpmn:outgoing>Flow_0yvkok9</bpmn:outgoing>
     </bpmn:userTask>

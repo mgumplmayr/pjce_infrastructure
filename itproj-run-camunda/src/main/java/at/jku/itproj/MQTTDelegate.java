@@ -24,13 +24,13 @@ public class MQTTDelegate implements JavaDelegate {
             public void execute(final DelegateExecution execution) throws Exception {
                 System.out.println("Starting MQTTDelegate");
                 final Object username = execution.getVariable("username");
-                variable = "Hello, my name is: " + username +" and this was sent by MQTTDelegate";
+                variable = "Hello, my name is: " + username +" and my process ID is: "+execution.getProcessInstanceId();
                 System.out.println(variable+" will be sent via MQTT");
 
                 MQTT mqtt = new MQTT();
                 mqtt.setHost("localhost", 1883);
                 connection = mqtt.blockingConnection();
                 connection.connect();
-                connection.publish("myTopic", variable.getBytes(), QoS.AT_LEAST_ONCE, false);
+                connection.publish("send_topic", variable.getBytes(), QoS.AT_LEAST_ONCE, false);
             }
         }

@@ -11,8 +11,8 @@
     <bpmn:userTask id="Activity_1ch36ln" name="Prozess beendet">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="FormField_1uj80c7" label="First Message" type="string" defaultValue="${first_message}" />
-          <camunda:formField id="FormField_2kaojh0" label="Second Message" type="string" defaultValue="${second_message}" />
+          <camunda:formField id="FormField_1uj80c7" label="First Message" type="string" defaultValue="first_message" />
+          <camunda:formField id="FormField_2kaojh0" label="Second Message" type="string" defaultValue="second_message" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14zd6ha</bpmn:incoming>

@@ -17,25 +17,25 @@ public class MQTTReceiver implements JavaDelegate {
     String broker = "tcp://localhost:1883";
     String clientId;
     RuntimeService runtimeService;
+    DelegateExecution execution;
 
     @Override
-    public void execute(final DelegateExecution execution) throws Exception { //topic name = message name = variable name, topic names in yaml festhalten
+    public void execute(final DelegateExecution execution) throws Exception {
+        //topic name = message name = variable name, topic names in yaml festhalten, client id = id vom element
         System.out.println("Executing MQTTReceiver");
         MemoryPersistence persistence = new MemoryPersistence();
-        System.out.println("members");
         clientId=execution.getCurrentActivityId();
-        System.out.println("ClientID: "+clientId);
+        System.out.println("ClientID for MQTT Receiver: "+clientId);
         mqttClient = new MqttClient(broker, clientId, persistence);
-        System.out.println("client");
         MqttConnectOptions connOpts = new MqttConnectOptions();
-        System.out.println("options");
         mqttClient.connect(connOpts);
-        System.out.println("connection");
+        this.execution = execution;
         runtimeService = execution.getProcessEngineServices().getRuntimeService();
         mqttClient.setCallback(new MqttCallback() {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 String messageReceived = new String(message.getPayload());
                 System.out.println("Message received: " + messageReceived+ " on topic: " + topic);
+
                 processMessage(messageReceived, topic);
             }
             public void deliveryComplete(IMqttDeliveryToken token) {
@@ -43,8 +43,8 @@ public class MQTTReceiver implements JavaDelegate {
             public void connectionLost(Throwable cause) {
             }
         });
-        System.out.println("callback");
-        mqttClient.subscribe(execution.getEventName()); //auch möglich: # für alle topics
+        System.out.println("Name of topic: "+execution.getCurrentActivityName());
+        mqttClient.subscribe(execution.getCurrentActivityName()); //auch möglich: # für alle topics
         System.out.println("subs");
     }
 
@@ -68,6 +68,7 @@ public class MQTTReceiver implements JavaDelegate {
             runtimeService.createMessageCorrelation(messageName)
                     .processInstanceId(processID)
                     .correlate();
+            execution.setVariable(messageName, message);
             }
 
     }

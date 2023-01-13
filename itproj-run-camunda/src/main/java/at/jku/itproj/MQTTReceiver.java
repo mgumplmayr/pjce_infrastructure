@@ -13,11 +13,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MQTTReceiver implements JavaDelegate {
-    static MqttClient mqttClient;
-    String broker = "tcp://localhost:1883";
-    String clientId;
-    RuntimeService runtimeService;
-    DelegateExecution execution;
+    private static MqttClient mqttClient;
+    private String broker = "tcp://localhost:1883";
+    private String clientId;
+    private String topic;
+    private RuntimeService runtimeService;
+    private DelegateExecution execution;
 
     @Override
     public void execute(final DelegateExecution execution) throws Exception {
@@ -43,16 +44,17 @@ public class MQTTReceiver implements JavaDelegate {
             public void connectionLost(Throwable cause) {
             }
         });
-        System.out.println("Name of topic: "+execution.getCurrentActivityName());
+        topic = execution.getCurrentActivityName();
+        System.out.println("Name of topic to subscribe: "+topic);
         mqttClient.subscribe(execution.getCurrentActivityName()); //auch möglich: # für alle topics
-        System.out.println("subs");
+
     }
 
 
     public void processMessage(String message, String messageName) {
         String processID = message.substring(0,message.indexOf(';')); //bei den MQTT Nachrichten muss man die ProcessID des Vorgangs mitschicken, Format: processid und ';' dann Nachricht
-            System.out.println("Received the following message: \n"+message+ " on topic: "+messageName);
-            System.out.println("ProcessID: "+processID);
+
+            System.out.println("ProcessID of message: "+processID);
             System.out.println("Events in Queue: "+runtimeService.createEventSubscriptionQuery().list());
 
             EventSubscription event = runtimeService

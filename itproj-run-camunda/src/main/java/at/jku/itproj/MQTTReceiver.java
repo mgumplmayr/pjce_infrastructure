@@ -36,7 +36,7 @@ public class MQTTReceiver implements JavaDelegate {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 String messageReceived = new String(message.getPayload());
                 System.out.println("Message received: " + messageReceived+ " on topic: " + topic);
-
+                //SQL Statment: Process ID; Topic; Content; Timestamp
                 processMessage(messageReceived, topic);
             }
             public void deliveryComplete(IMqttDeliveryToken token) {

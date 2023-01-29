@@ -26,5 +26,6 @@ public class MQTTDelegate implements JavaDelegate {
                 connection = mqtt.blockingConnection();
                 connection.connect();
                 connection.publish(topic, message.getBytes(), QoS.AT_LEAST_ONCE, false);
+                //SQL Statment: Process ID; Topic; Content; Timestamp
             }
         }

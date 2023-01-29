@@ -27,5 +27,10 @@ public class MQTTDelegate implements JavaDelegate {
                 connection.connect();
                 connection.publish(topic, message.getBytes(), QoS.AT_LEAST_ONCE, false);
                 //SQL Statment: Process ID; Topic; Content; Timestamp
+                insertMessage(execution.getProcessInstanceId(), topic, message);
             }
-        }
+
+    public void insertMessage(String processID, String topic, String content){
+        DatabaseConnector.insertMessage("sentMessages", processID, topic, content);
+    }
+}

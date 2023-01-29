@@ -71,7 +71,11 @@ public class MQTTReceiver implements JavaDelegate {
                     .processInstanceId(processID)
                     .correlate();
             execution.setVariable(messageName, message);
+            insertMessage(processID, messageName, message);
             }
+    }
 
+    public void insertMessage(String processID, String topic, String content){
+        DatabaseConnector.insertMessage("received Messages", processID, topic, content);
     }
 }

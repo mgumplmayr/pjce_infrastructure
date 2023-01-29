@@ -50,7 +50,7 @@
     <bpmn:intermediateThrowEvent id="Event_0w92q4w" name="send_message">
       <bpmn:incoming>Flow_0h31sub</bpmn:incoming>
       <bpmn:outgoing>Flow_1g2b1at</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_06vndhx" camunda:delegateExpression="${MQTTDelegate}" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_06vndhx" camunda:delegateExpression="${MQTTPublisher}" />
     </bpmn:intermediateThrowEvent>
   </bpmn:process>
   <bpmn:message id="Message_0f0r6sb" name="second_message" />

@@ -7,15 +7,12 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.runtime.EventSubscription;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class MQTTReceiver implements JavaDelegate {
-    private static MqttClient mqttClient;
-    private String broker = "tcp://localhost:1883";
-    private String clientId;
+public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
+    private MqttClient client;
     private String topic;
     private RuntimeService runtimeService;
     private DelegateExecution execution;
@@ -24,15 +21,10 @@ public class MQTTReceiver implements JavaDelegate {
     public void execute(final DelegateExecution execution) throws Exception {
         //topic name = message name = variable name, topic names in yaml festhalten, client id = id vom element
         System.out.println("Executing MQTTReceiver");
-        MemoryPersistence persistence = new MemoryPersistence();
-        clientId=execution.getCurrentActivityId();
-        System.out.println("ClientID for MQTT Receiver: "+clientId);
-        mqttClient = new MqttClient(broker, clientId, persistence);
-        MqttConnectOptions connOpts = new MqttConnectOptions();
-        mqttClient.connect(connOpts);
+        client = getClient(execution.getCurrentActivityId());
         this.execution = execution;
         runtimeService = execution.getProcessEngineServices().getRuntimeService();
-        mqttClient.setCallback(new MqttCallback() {
+        client.setCallback(new MqttCallback() {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 String messageReceived = new String(message.getPayload());
                 System.out.println("Message received: " + messageReceived+ " on topic: " + topic);
@@ -46,8 +38,7 @@ public class MQTTReceiver implements JavaDelegate {
         });
         topic = execution.getCurrentActivityName();
         System.out.println("Name of topic to subscribe: "+topic);
-        mqttClient.subscribe(execution.getCurrentActivityName()); //auch möglich: # für alle topics
-
+        client.subscribe(execution.getCurrentActivityName()); //auch möglich: # für alle topics
     }
 
 

@@ -1,0 +1,17 @@
+Publisher:
+Topic entspricht dem Namen der Message,
+Nachricht wird aus Variable mit dem Namen: topic+"_request" entnommen.
+Nachricht wird als JSON-String mit dem Inhalt processID und status gesendet, wobei status dem Inhalt der Variable entspricht
+
+Receiver:
+Topic entspricht dem Namen der Message,
+Nachricht muss als JSON-String mit dem Inhalt processID und status empfangen werden.
+Die processID wird verwendet, um die richtige Nachricht zuzordnen. Keine Leerzeichen in Inhalt von Status verwenden
+Der status wird auf eine Variable mit dem Namen topic+"_response zugewiesen
+
+Delegator:
+Abstrakte Basisklasse von Receiver und Publisher.
+Die Methode getClient erstellt einen Client mit dem gewünschten Namen, welcher als String übergeben wird. 
+Außerdem wird dem gewünschten Namen der akutuelle Timestamp hinzugefügt, um doppelte Client-Namen zu vermeiden
+Timestamp, damit Key eindeutig und auch in Loop keine doppelten Clients vorkommen.
+Sowohl Receiver als auch Publisher verwenden die CurrentActivityId mit der Zeit des Aufrufes als Namen für den Client.

@@ -1,7 +1,6 @@
 package at.jku.itproj;
 
 import camundajar.impl.com.google.gson.Gson;
-import org.apache.tomcat.util.json.JSONParser;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -9,6 +8,7 @@ import org.camunda.bpm.engine.runtime.EventSubscription;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 
@@ -18,14 +18,13 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
     private String topic;
     private String processID;
     private RuntimeService runtimeService;
-    private DelegateExecution execution;
+
 
     @Override
     public void execute(final DelegateExecution execution) throws Exception {
         //topic name = message name = variable name, topic names in yaml festhalten, client id = id vom element
         System.out.println("Executing MQTTReceiver");
         client = getClient(execution.getCurrentActivityId());
-        this.execution = execution;
         runtimeService = execution.getProcessEngineServices().getRuntimeService();
         client.setCallback(new MqttCallback() {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -35,8 +34,10 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
                 processMessage(messageReceived, topic);
             }
             public void deliveryComplete(IMqttDeliveryToken token) {
+                System.out.println("Delivery complete - Token: "+token.toString());
             }
             public void connectionLost(Throwable cause) {
+                System.out.println("Connection lost - Cause: "+cause.getCause());
             }
         });
         topic = execution.getCurrentActivityName();
@@ -69,9 +70,8 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
                     processInstanceId(processID)
                     .correlate();
             }
-            System.out.println(topic);
-            System.out.println(status);
-            runtimeService.setVariable(processID, topic+"_response", status); //Struktur für Variable bei Receiver: topic und _response
+        System.out.println("Creating variable "+topic+"_response with content: "+status);
+        runtimeService.setVariable(processID, topic+"_response", status); //Struktur für Variable bei Receiver: topic und _response
     }
 
     public void insertMessage(String processID, String topic, String content){

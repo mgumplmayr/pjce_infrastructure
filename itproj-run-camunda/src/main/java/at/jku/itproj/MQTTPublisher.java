@@ -19,8 +19,8 @@ public class MQTTPublisher extends MQTTDelegator implements JavaDelegate {
         topic = execution.getCurrentActivityName();
         processID = execution.getProcessInstanceId();
         client = getClient(execution.getCurrentActivityId());
-        String status = execution.getVariable(topic+"_request").toString(); //Struktur für Variable bei Publisher: topic und _request
-        String message = "{\n\"processID\":"+processID+",\n\"status\":"+status+"\n}";
+        String status = execution.getVariable(createVariableName(topic+"_pub")).toString(); //Struktur für Variable bei Publisher: topic und _pub
+        String message = "{\n\"processID\":"+"\""+processID+"\""+",\n\"status\":"+"\""+status+"\""+"\n}";
         System.out.println("Publishing on topic "+topic+": "+message);
         MqttMessage mqttMessage = new MqttMessage(message.getBytes());
         client.publish(topic, mqttMessage);

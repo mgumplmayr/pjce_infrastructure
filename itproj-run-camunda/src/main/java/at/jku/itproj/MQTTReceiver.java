@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -70,9 +72,11 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
                     processInstanceId(processID)
                     .correlate();
             }
-        System.out.println("Creating variable "+topic+"_response with content: "+status);
-        runtimeService.setVariable(processID, topic+"_response", status); //Struktur für Variable bei Receiver: topic und _response
+        System.out.println("Creating variable "+createVariableName(topic+"_rec")+"_response with content: "+status);
+        runtimeService.setVariable(processID, createVariableName(topic+"_rec"), status); //Struktur für Variable bei Receiver: topic und _rec
     }
+
+
 
     public void insertMessage(String processID, String topic, String content){
         DatabaseConnector.insertMessage("received Messages", processID, topic, content);

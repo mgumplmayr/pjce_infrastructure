@@ -5,6 +5,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class MQTTDelegator {
     private final String broker = "tcp://localhost:1883";
@@ -27,4 +29,11 @@ public abstract class MQTTDelegator {
         }
         return client;
     }
+
+    String createVariableName(String variable){
+        Pattern pattern = Pattern.compile("\\W");
+        Matcher matcher = pattern.matcher(variable);
+        return matcher.replaceAll("_");
+    }
+    public abstract void insertMessage(String processID, String topic, String content);
 }

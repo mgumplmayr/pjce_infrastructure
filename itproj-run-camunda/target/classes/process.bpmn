@@ -8,16 +8,7 @@
     <bpmn:startEvent id="StartEvent_1" name="Start">
       <bpmn:outgoing>Flow_1fnd4kl</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="say-hello" name="Message to send" camunda:assignee="demo" camunda:candidateUsers="demo">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="send_message_request" label="Name:" type="string" />
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_00k63tk</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bot5ad</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:intermediateCatchEvent id="Event_0fon1co" name="receive_message">
+    <bpmn:intermediateCatchEvent id="Event_0fon1co" name="smart_room/response">
       <bpmn:extensionElements>
         <camunda:executionListener delegateExpression="${MQTTReceiver}" event="start" />
       </bpmn:extensionElements>
@@ -25,7 +16,7 @@
       <bpmn:outgoing>Flow_14zd6ha</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0ro1sfc" messageRef="Message_0f0r6sb" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:intermediateThrowEvent id="Event_0w92q4w" name="send_message">
+    <bpmn:intermediateThrowEvent id="Event_0w92q4w" name="smart_room/request">
       <bpmn:extensionElements>
         <camunda:executionListener delegateExpression="${MQTTPublisher}" event="start" />
       </bpmn:extensionElements>
@@ -33,7 +24,7 @@
       <bpmn:outgoing>Flow_1g2b1at</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_06vndhx" messageRef="Message_0xlm19c" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_1fnd4kl" sourceRef="StartEvent_1" targetRef="Activity_1jq9iiw" />
+    <bpmn:sequenceFlow id="Flow_1fnd4kl" sourceRef="StartEvent_1" targetRef="say-hello" />
     <bpmn:sequenceFlow id="Flow_0bot5ad" sourceRef="say-hello" targetRef="Event_0w92q4w" />
     <bpmn:sequenceFlow id="Flow_0yvkok9" sourceRef="Activity_1ch36ln" targetRef="EndEvent_0x6ir2l" />
     <bpmn:sequenceFlow id="Flow_14zd6ha" sourceRef="Event_0fon1co" targetRef="Activity_1ch36ln" />
@@ -44,48 +35,48 @@
     <bpmn:userTask id="Activity_1ch36ln" name="Prozess beendet">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="receive_message_response" label="Response:" type="string" />
+          <camunda:formField id="smart_room_response_rec" label="Response:" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14zd6ha</bpmn:incoming>
       <bpmn:outgoing>Flow_0yvkok9</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_1jq9iiw" name="set" camunda:expression="${execution.setVariable(&#34;receive_message_response&#34;,&#34;yes&#34;)} ">
+    <bpmn:userTask id="say-hello" name="Message to send" camunda:assignee="demo" camunda:candidateUsers="demo">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="smart_room_request_pub" label="Name:" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1fnd4kl</bpmn:incoming>
-      <bpmn:outgoing>Flow_00k63tk</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_00k63tk" sourceRef="Activity_1jq9iiw" targetRef="say-hello" />
+      <bpmn:outgoing>Flow_0bot5ad</bpmn:outgoing>
+    </bpmn:userTask>
   </bpmn:process>
-  <bpmn:message id="Message_0f0r6sb" name="receive_message" />
-  <bpmn:message id="Message_0xlm19c" name="send_message" />
+  <bpmn:message id="Message_0f0r6sb" name="smart_room/response" />
+  <bpmn:message id="Message_0xlm19c" name="smart_room/request" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1tl470z">
       <bpmndi:BPMNShape id="Participant_0ixor0x_di" bpmnElement="Participant_0ixor0x" isHorizontal="true">
         <dc:Bounds x="180" y="80" width="1270" height="250" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1fnd4kl_di" bpmnElement="Flow_1fnd4kl">
-        <di:waypoint x="268" y="197" />
-        <di:waypoint x="370" y="197" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0bot5ad_di" bpmnElement="Flow_0bot5ad">
-        <di:waypoint x="630" y="197" />
-        <di:waypoint x="742" y="197" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0yvkok9_di" bpmnElement="Flow_0yvkok9">
-        <di:waypoint x="1330" y="197" />
-        <di:waypoint x="1392" y="197" />
+      <bpmndi:BPMNEdge id="Flow_1g2b1at_di" bpmnElement="Flow_1g2b1at">
+        <di:waypoint x="778" y="197" />
+        <di:waypoint x="952" y="197" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14zd6ha_di" bpmnElement="Flow_14zd6ha">
         <di:waypoint x="988" y="197" />
         <di:waypoint x="1230" y="197" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1g2b1at_di" bpmnElement="Flow_1g2b1at">
-        <di:waypoint x="778" y="197" />
-        <di:waypoint x="952" y="197" />
+      <bpmndi:BPMNEdge id="Flow_0yvkok9_di" bpmnElement="Flow_0yvkok9">
+        <di:waypoint x="1330" y="197" />
+        <di:waypoint x="1392" y="197" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_00k63tk_di" bpmnElement="Flow_00k63tk">
-        <di:waypoint x="470" y="197" />
-        <di:waypoint x="530" y="197" />
+      <bpmndi:BPMNEdge id="Flow_0bot5ad_di" bpmnElement="Flow_0bot5ad">
+        <di:waypoint x="560" y="197" />
+        <di:waypoint x="742" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fnd4kl_di" bpmnElement="Flow_1fnd4kl">
+        <di:waypoint x="268" y="197" />
+        <di:waypoint x="460" y="197" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="232" y="179" width="36" height="36" />
@@ -93,19 +84,16 @@
           <dc:Bounds x="238" y="222" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_08mft2c_di" bpmnElement="say-hello">
-        <dc:Bounds x="530" y="157" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1s77w2f_di" bpmnElement="Event_0fon1co">
         <dc:Bounds x="952" y="179" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="927" y="222" width="87" height="14" />
+          <dc:Bounds x="929" y="222" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1nxicpp_di" bpmnElement="Event_0w92q4w">
         <dc:Bounds x="742" y="179" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="723" y="222" width="75" height="14" />
+          <dc:Bounds x="719" y="222" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0x6ir2l_di" bpmnElement="EndEvent_0x6ir2l">
@@ -117,8 +105,8 @@
       <bpmndi:BPMNShape id="Activity_0zkeowg_di" bpmnElement="Activity_1ch36ln">
         <dc:Bounds x="1230" y="157" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1jq9iiw_di" bpmnElement="Activity_1jq9iiw">
-        <dc:Bounds x="370" y="157" width="100" height="80" />
+      <bpmndi:BPMNShape id="UserTask_08mft2c_di" bpmnElement="say-hello">
+        <dc:Bounds x="460" y="157" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

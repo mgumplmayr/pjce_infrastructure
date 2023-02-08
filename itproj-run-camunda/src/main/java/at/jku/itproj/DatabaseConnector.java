@@ -48,18 +48,19 @@ public class DatabaseConnector {
         try {
             //build statement
             connection = DriverManager.getConnection(url, user, password);
-            String query = "SELECT * FROM tableName WHERE process_id = ?";
+            String query = "SELECT * FROM tableName WHERE process_id LIKE ?";
             query =query.replace("tableName",tableName);
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, processID);
 
             //execute statement
-            ResultSet resultSet = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery();
+            System.out.println("Content of processID "+processID+" in table "+tableName+":");
             while (resultSet.next()) {
                 String date = resultSet.getTimestamp("date").toString();
                 String topic = resultSet.getString("topic");
                 String content = resultSet.getString("content");
-                System.out.println("date: " + date + "topic: " + topic + ", content: " + content);
+                System.out.println("date: " + date + ", topic: " + topic + ", content: " + content);
             }
 
         } catch (SQLException e) {

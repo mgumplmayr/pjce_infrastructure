@@ -14,7 +14,7 @@ import java.util.Properties;
  * The name of the message that calls this class is used to set the topic and
  * the name of the variable the received message is set to.
  * */
-@Service
+@Service("MQTTReceiver")
 public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
     private MqttClient client;
     private String topic;

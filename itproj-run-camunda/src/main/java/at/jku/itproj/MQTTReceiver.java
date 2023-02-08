@@ -16,13 +16,7 @@ import java.util.Properties;
  * */
 @Service("MQTTReceiver")
 public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
-    private MqttClient client;
-    private String topic;
-    private String processID;
-    private RuntimeService runtimeService;
-
-    private DelegateExecution execution;
-
+    RuntimeService runtimeService;
 
     /**The execute method is called by the Camunda engine through an execution listener when the message catch event is reached in the process.
      * The method creates a client for the MQTT broker and subscribes to the topic of the event.
@@ -32,13 +26,12 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
     @Override
     public void execute(final DelegateExecution execution) throws Exception {
         System.out.println("Executing MQTTReceiver");
-        this.execution = execution;
-        client = getClient(execution.getCurrentActivityId());
+        MqttClient client = getClient(execution.getCurrentActivityId());
         runtimeService = execution.getProcessEngineServices().getRuntimeService();
         client.setCallback(new MqttCallback() {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 String messageReceived = new String(message.getPayload());
-                processMessage(messageReceived, topic);
+                processMessage(messageReceived, topic, execution);
             }
             public void deliveryComplete(IMqttDeliveryToken token) {
                 System.out.println("Delivery complete - Token: "+token.toString());
@@ -47,7 +40,7 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
                 System.out.println("Connection lost - Cause: "+cause.getCause());
             }
         });
-        topic = execution.getCurrentActivityName();
+        String topic = execution.getCurrentActivityName();
         System.out.println("Name of topic to subscribe: "+topic);
         client.subscribe(execution.getCurrentActivityName()); //auch möglich: # für alle topics
     }
@@ -57,13 +50,16 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
      * @param message String containing the message received from the MQTT broker
      * @param topic String containing the topic of the message
      * */
-    public synchronized void processMessage(String message, String topic) { //nach einer Message terminieren funktioniert nicht - was wenn anderer Input?
+    public synchronized void processMessage(String message, String topic, DelegateExecution execution) { //nach einer Message terminieren funktioniert nicht - was wenn anderer Input?
         //get variables from message
         Gson g = new Gson();
         Properties messageContent = g.fromJson(message, Properties.class);
-        processID = messageContent.get("processID").toString();
+        String processID = messageContent.get("processID").toString();
         String status = messageContent.get("status").toString();
-
+        if(!processID.equals(execution.getProcessInstanceId())) {
+            System.out.println("Message not for this process");
+            return;
+        }
         //check if message event with processID exists
         EventSubscription event = runtimeService
                 .createEventSubscriptionQuery()
@@ -86,7 +82,6 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
         runtimeService.setVariable(processID, createVariableName(topic+"_rec"), status); //Struktur für Variable bei Receiver: topic und _rec
         insertMessage(processID, topic, status);
     }
-
 
     public void insertMessage(String processID, String topic, String content){
         DatabaseConnector.insertMessage("received_messages", processID, topic, content);

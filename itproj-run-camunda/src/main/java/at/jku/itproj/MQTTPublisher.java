@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
  * */
 @Service("MQTTPublisher")
 public class MQTTPublisher extends MQTTDelegator implements JavaDelegate {
-    private MqttClient client;
-    private String topic;
-    private String processID;
 
     /**The execute method is called by the Camunda engine through an execution listener when the message throw event is reached in the process.
      * The method creates a client for the MQTT broker and subscribes to the topic of the event.
@@ -25,14 +22,14 @@ public class MQTTPublisher extends MQTTDelegator implements JavaDelegate {
     public void execute(final DelegateExecution execution) throws Exception {
         //set variables
         System.out.println("Executing MQTTPublisher");
-        topic = execution.getCurrentActivityName();
-        processID = execution.getProcessInstanceId();
-        client = getClient(execution.getCurrentActivityId());
+        String topic = execution.getCurrentActivityName();
+        String processID = execution.getProcessInstanceId();
+        MqttClient client = getClient(execution.getCurrentActivityId());
         String status = execution.getVariable(createVariableName(topic+"_pub"))==null? "null": execution.getVariable(createVariableName(topic+"_pub")).toString(); //Struktur für Variable bei Publisher: topic und _pub
         String message = "{\n\"processID\":"+"\""+processID+"\""+",\n\"status\":"+"\""+status+"\""+"\n}";
 
         //publish message
-        System.out.println("Publishing on topic "+topic+": "+message);
+        System.out.println("Publishing on topic "+topic+": \n"+message);
         MqttMessage mqttMessage = new MqttMessage(message.getBytes());
         client.publish(topic, mqttMessage);
         insertMessage(execution.getProcessInstanceId(), topic, status);

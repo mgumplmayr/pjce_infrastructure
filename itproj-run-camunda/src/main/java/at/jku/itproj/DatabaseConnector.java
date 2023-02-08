@@ -62,11 +62,11 @@ public class DatabaseConnector {
                 String content = resultSet.getString("content");
                 System.out.println("date: " + date + ", topic: " + topic + ", content: " + content);
             }
+            connection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
     public static void removeContent(String processID){}
 }

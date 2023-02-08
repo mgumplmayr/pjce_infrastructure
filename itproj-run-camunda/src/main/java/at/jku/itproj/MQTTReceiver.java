@@ -7,13 +7,13 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.runtime.EventSubscription;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.stereotype.Service;
-
-import java.text.SimpleDateFormat;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
+/** The MQTTReceiver class is used to receive messages from the MQTT broker.
+ * The name of the message that calls this class is used to set the topic and
+ * the name of the variable the received message is set to.
+ * */
 @Service
 public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
     private MqttClient client;
@@ -24,10 +24,13 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
     private DelegateExecution execution;
 
 
-
+    /**The execute method is called by the Camunda engine through an execution listener when the message catch event is reached in the process.
+     * The method creates a client for the MQTT broker and subscribes to the topic of the event.
+     * In the callback on messageArrived, the message is processed.
+     * @param execution DelegateExecution passed by the Camunda engine
+     * */
     @Override
     public void execute(final DelegateExecution execution) throws Exception {
-        //topic name = message name = variable name, topic names in yaml festhalten, client id = id vom element
         System.out.println("Executing MQTTReceiver");
         this.execution = execution;
         client = getClient(execution.getCurrentActivityId());
@@ -35,7 +38,6 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
         client.setCallback(new MqttCallback() {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 String messageReceived = new String(message.getPayload());
-                //SQL Statment: Process ID; Topic; Content; Timestamp
                 processMessage(messageReceived, topic);
             }
             public void deliveryComplete(IMqttDeliveryToken token) {
@@ -50,13 +52,19 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
         client.subscribe(execution.getCurrentActivityName()); //auch möglich: # für alle topics
     }
 
-
-    public synchronized void processMessage(String message, String topic) throws InterruptedException { //nach einer Message terminieren funktioniert nicht - was wenn anderer Input?
+    /**The processMessage method is called by the callback on messageArrived.
+     * The method checks for a message with the processID, correlates the message and sets the variables in the process.
+     * @param message String containing the message received from the MQTT broker
+     * @param topic String containing the topic of the message
+     * */
+    public synchronized void processMessage(String message, String topic) { //nach einer Message terminieren funktioniert nicht - was wenn anderer Input?
+        //get variables from message
         Gson g = new Gson();
         Properties messageContent = g.fromJson(message, Properties.class);
         processID = messageContent.get("processID").toString();
         String status = messageContent.get("status").toString();
-        //bei den MQTT Nachrichten muss man die ProcessID des Vorgangs im JSON mitsenden.
+
+        //check if message event with processID exists
         EventSubscription event = runtimeService
                 .createEventSubscriptionQuery()
                 .processInstanceId(processID)
@@ -65,20 +73,23 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
             System.out.println("No subscription found with ProcessID: "+processID+"and messageName: "+topic);
             return;
         }
+
+        //correlate message
         System.out.println("Received on Topic: "+topic+"\nContent: "+messageContent);
-        System.out.println("Events in Queue: "+runtimeService.createEventSubscriptionQuery().list());
+        //System.out.println("Events in Queue: "+runtimeService.createEventSubscriptionQuery().list());
         System.out.println("Event to correlate: "+event);
-        insertMessage(processID, topic, status);
+
         runtimeService.
                 createMessageCorrelation(topic).
                 processInstanceId(processID)
                 .correlate();
-        System.out.println("Creating variable "+createVariableName(topic+"_rec")+"_response with content: "+status);
+        System.out.println("Creating variable "+createVariableName(topic+"_rec")+" with content: "+status);
         runtimeService.setVariable(processID, createVariableName(topic+"_rec"), status); //Struktur für Variable bei Receiver: topic und _rec
+        insertMessage(processID, topic, status);
     }
 
 
     public void insertMessage(String processID, String topic, String content){
-        //DatabaseConnector.insertMessage("received Messages", processID, topic, content);
+        DatabaseConnector.insertMessage("received_messages", processID, topic, content);
     }
 }

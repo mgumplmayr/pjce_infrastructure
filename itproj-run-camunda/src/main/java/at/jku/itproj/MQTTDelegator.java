@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**The MQTTDelegator class is the abstract superclass of MQTTPublisher and MQTTReceiver.
+ * It provides the basic functionality for creating an MQTT Client and creating a valid variable name.
+ * */
 public abstract class MQTTDelegator {
     private final String broker = "tcp://localhost:1883";
     private MqttClient client;

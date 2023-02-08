@@ -78,7 +78,6 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
         System.out.println("Received on Topic: "+topic+"\nContent: "+messageContent);
         //System.out.println("Events in Queue: "+runtimeService.createEventSubscriptionQuery().list());
         System.out.println("Event to correlate: "+event);
-
         runtimeService.
                 createMessageCorrelation(topic).
                 processInstanceId(processID)

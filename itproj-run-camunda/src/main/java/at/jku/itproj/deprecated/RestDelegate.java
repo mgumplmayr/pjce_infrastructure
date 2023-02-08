@@ -1,4 +1,4 @@
-package at.jku.itproj;
+package at.jku.itproj.deprecated;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.delegate.DelegateExecution;

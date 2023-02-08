@@ -1,4 +1,4 @@
-package at.jku.itproj;
+package at.jku.itproj.deprecated;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;

@@ -1,4 +1,4 @@
-package at.jku.itproj;
+package at.jku.itproj.deprecated;
 
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;

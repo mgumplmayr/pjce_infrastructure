@@ -1,4 +1,4 @@
-package at.jku.itproj;
+package at.jku.itproj.deprecated;
 
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;

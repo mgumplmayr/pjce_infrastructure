@@ -29,7 +29,7 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
         MqttClient client = getClient(execution.getCurrentActivityId());
         runtimeService = execution.getProcessEngineServices().getRuntimeService();
         client.setCallback(new MqttCallback() {
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
+            public void messageArrived(String topic, MqttMessage message) {
                 String messageReceived = new String(message.getPayload());
                 processMessage(messageReceived, topic, execution);
             }
@@ -78,7 +78,7 @@ public class MQTTReceiver extends MQTTDelegator implements JavaDelegate  {
                 createMessageCorrelation(topic).
                 processInstanceId(processID)
                 .correlate();
-        System.out.println("Creating variable "+createVariableName(topic+"_rec")+" with content: "+status);
+        System.out.println("Creating variable "+createVariableName(topic+"_rec")+" with content: "+status+"\n");
         runtimeService.setVariable(processID, createVariableName(topic+"_rec"), status); //Struktur für Variable bei Receiver: topic und _rec
         insertMessage(processID, topic, status);
     }

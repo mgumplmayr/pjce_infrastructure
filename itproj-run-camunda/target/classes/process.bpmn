@@ -2,9 +2,9 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
   <bpmn:message id="Message_0xprkj5" name="first_message" />
   <bpmn:collaboration id="Collaboration_1tl470z">
-    <bpmn:participant id="Participant_0ixor0x" name="Spot" processRef="roboDog-process" />
+    <bpmn:participant id="Participant_0ixor0x" name="Spot" processRef="robodog-process" />
   </bpmn:collaboration>
-  <bpmn:process id="roboDog-process" isExecutable="true">
+  <bpmn:process id="robodog-process" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Start">
       <bpmn:outgoing>Flow_1fnd4kl</bpmn:outgoing>
     </bpmn:startEvent>

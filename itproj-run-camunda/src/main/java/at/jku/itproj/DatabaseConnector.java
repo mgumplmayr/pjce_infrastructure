@@ -6,9 +6,9 @@ import java.sql.*;
  * */
 public class DatabaseConnector {
     private static Connection connection;
-    private static String url = "jdbc:mariadb://localhost:3306/ceprojekt";
+    private static String url = "jdbc:mariadb://localhost:8883/ceprojekt"; //TODO anpassen
     private static String user = "root";
-    private static String password = "password";
+    private static String password = "admin";
 
     /**The insertMessage method inserts the message into the relational database.
      * @param tableName String to be used as the name of the table to insert the message into
@@ -68,5 +68,4 @@ public class DatabaseConnector {
             e.printStackTrace();
         }
     }
-    public static void removeContent(String processID){}
 }
